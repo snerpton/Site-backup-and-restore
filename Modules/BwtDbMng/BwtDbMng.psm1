@@ -119,7 +119,7 @@ function DbRestore()
     #See more at: http://www.sswug.org/articlesection/default.aspx?TargetID=44909#sthash.YMwxs7lz.dpuf
 }
 
-function DbRestoreNewName()
+function DbRestoreNewName($scrFile)
 {
     #============================================================
     # Restore a Database using PowerShell and SQL Server SMO
@@ -138,7 +138,8 @@ function DbRestoreNewName()
     [Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.ConnectionInfo") | Out-Null
     [Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.SmoEnum") | Out-Null
      
-    $backupFile = 'C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\Backup\brit-thoracic.local.bak'
+    #$backupFile = 'C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\Backup\brit-thoracic.local.bak'
+    $backupFile = $scrFile 
      
     #we will query the database name from the backup header later
     $server = New-Object ("Microsoft.SqlServer.Management.Smo.Server") "(local)"

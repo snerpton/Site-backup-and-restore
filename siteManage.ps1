@@ -49,10 +49,12 @@ $bkupFilesSrcDir = "C:\inetpub\wwwSites\$domainStart.$domainEndLocal"  # Directo
 $bkupFilesTargetFileZip = "C:\tmp\$domainStart.$domainEndLocal.zip"    # Directory the backup will be placed e.g. C:\tmp 
 $bkupDbSrcDb = "$domainStart.$domainEndLocal"                          # Database we are backing up
 $bkupDbTargetDir = "C:\tmp"
-$bkupDbTargetFile = $domainStart
+$bkupDbTargetFile = $bkupDbSrcDb
 
 $restoreFilesSrcFileZip = "C:\tmp\$domainStart.$domainEndLocal.zip"    # Zip file containing the website files we are going to restore.
 $restoreFilesTargetDir = "C:\inetpub\$domainStart.$domainEndRmt"
+$restoreDbSrcDbZip = "C:\tmp\$domainStart.$domainEndLocal.bak.zip"
+$restoreDbSrcDb = "C:\tmp\"
 # -----------------------------------------------------------------------------
 # END: configuration
 # -----------------------------------------------------------------------------
@@ -110,9 +112,9 @@ function RestoreFiles()
     UnZipMe –zipfilename $zipFile.FullName -destination $destinationDir.Fullname
 }
 
-function RestoreDb()
+function RestoreDb($dbSrc)
 {
-    
+    Write-Host "db src: $dbSrc"
 
 }
 
@@ -132,8 +134,12 @@ function CreateLocalBackup()
 function RestoreLocalBackupToRemote()
 {
     #RestoreFiles
-    RestoreDb
-    
+    Write-Host "Unzipping database backup..."
+    Write-Host "--> src:  $restoreDbSrcDbZip"
+    Write-Host "--> dest: $restoreDbSrcDb"
+    UnZipMe -zipfilename $restoreDbSrcDbZip -destination $restoreDbSrcDb
+    RestoreDb -dbSrc $bkupDbSrcDb
+   
 }
 
 cls
