@@ -127,7 +127,7 @@ function CreateLocalBackup()
     # Database must be backed up before files... script error otherwise. Not sure why.
     CreateBackupDb -database $bkupDbSrcDb -targetDir $bkupDbTargetDir -targetFile $bkupDbTargetFile
     # I'm unable to add the .bak file to the root of the zip archive, so we put it in its own archive.
-    Write-Zip -Path "$bkupDbTargetDir\$bkupDbTargetFile.bak" -OutputPath "$bkupDbTargetDir\brit-thoracic.local.bak.zip"
+    Write-Zip -Path "$bkupDbTargetDir\$bkupDbTargetFile" -OutputPath "$bkupDbTargetDir\brit-thoracic.local.bak.zip"
     Remove-Item "$bkupDbTargetDir\$bkupDbTargetFile"
     CreateBackupFiles -srcDir $bkupFilesSrcDir -destZip $bkupFilesTargetFileZip
     
@@ -138,9 +138,9 @@ function RestoreLocalBackupToRemote()
     #RestoreFiles
     Write-Host "Unzipping database backup..."
     Write-Host "--> src:  $restoreDbSrcDbZip"
-    Write-Host "--> dest: $restoreDbSrcDbDir"
+    Write-Host "--> dest: $restoreDbTargetDir"
     UnZipMe -zipfilename $restoreDbSrcDbZip -destination $restoreDbTargetDir
-    RestoreDb -dbSrcFileDir $restoreDbTargetDir -dbSrcFileBak $bkupDbTargetFile -dbNewName $restoreDbNewName
+    #RestoreDb -dbSrcFileDir $restoreDbTargetDir -dbSrcFileBak $bkupDbTargetFile -dbNewName $restoreDbNewName
 }
 
 cls
@@ -148,10 +148,10 @@ $env:PSModulePath = $env:PSModulePath + ";" + "$HOME\Documents\bin\Modules"
 Import-Module Pscx 
 Import-Module BwtDbMng
 
-CreateLocalBackup
-#RestoreLocalBackupToRemote
+#CreateLocalBackup
+RestoreLocalBackupToRemote
 
-
+Import-Module Pscx
 Remove-Module BwtDbMng
 
 
