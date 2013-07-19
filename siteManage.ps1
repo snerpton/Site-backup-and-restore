@@ -50,6 +50,9 @@ $bkupFilesTargetFileZip = "C:\tmp\$domainStart.$domainEndLocal.zip"    # Directo
 $bkupDbSrcDb = "$domainStart.$domainEndLocal"                          # Database we are backing up
 $bkupDbTargetDir = "C:\tmp"
 $bkupDbTargetFile = $domainStart
+
+$restoreFilesSrcFileZip = "C:\tmp\$domainStart.$domainEndLocal.zip"    # Zip file containing the website files we are going to restore.
+$restoreFilesTargetDir = "C:\inetpub\$domainStart.$domainEndRmt"
 # -----------------------------------------------------------------------------
 # END: configuration
 # -----------------------------------------------------------------------------
@@ -97,26 +100,51 @@ function CreateBackupDb($database, $targetDir, $targetFile)
     DbBackup -database $database -targetDir $targetDir -targetFile $targetFile
 }
 
+function RestoreFiles()
+{
+    Write-Host "--> Restoring website files..."
+    $zipFile = gi -Path $restoreFilesSrcFileZip
+    $destinationDir = gi -Path $restoreFilesTargetDir
+    Write-Host "--> src:  $zipFile"
+    Write-Host "--> dest: $destinationDir"
+    UnZipMe –zipfilename $zipFile.FullName -destination $destinationDir.Fullname
+}
+
+function RestoreDb()
+{
+    
+
+}
+
 
 ##### Main program #####
+
+function CreateLocalBackup()
+{
+    # Database must be backed up before files... script error otherwise. Not sure why.
+    CreateBackupDb -database $bkupDbSrcDb -targetDir $bkupDbTargetDir -targetFile $bkupDbTargetFile
+    CreateBackupFiles -srcDir $bkupFilesSrcDir -destZip $bkupFilesTargetFileZip
+    # I'm unable to add the .bak file to the root of the zip archive, so we put it in its own archive.
+    Write-Zip -Path "$bkupDbTargetDir\$bkupDbTargetFile.bak" -OutputPath "$bkupDbTargetDir\brit-thoracic.local.bak.zip"
+    Remove-Item "$bkupDbTargetDir\$bkupDbTargetFile.bak"
+}
+
+function RestoreLocalBackupToRemote()
+{
+    #RestoreFiles
+    RestoreDb
+    
+}
+
 cls
 $env:PSModulePath = $env:PSModulePath + ";" + "$HOME\Documents\bin\Modules"
 Import-Module BwtDbMng
 
-# Database must be backed up before files... script error otherwise. Not sure why.
-CreateBackupDb -database $bkupDbSrcDb -targetDir $bkupDbTargetDir -targetFile $bkupDbTargetFile
-CreateBackupFiles -srcDir $bkupFilesSrcDir -destZip $bkupFilesTargetFileZip
-# I'm unable to add the .bak file to the root of the zip archive, so we put it in its own archive.
-Write-Zip -Path "$bkupDbTargetDir\$bkupDbTargetFile.bak" -OutputPath "$bkupDbTargetDir\brit-thoracic.local.bak.zip"
-Remove-Item "$bkupDbTargetDir\$bkupDbTargetFile.bak"
+#CreateLocalBackup
+RestoreLocalBackupToRemote
 
 
-Write-Host "The end?"
 Remove-Module BwtDbMng
-
-
-
-#gi "$bkupDbTargetFile.bak" | Write-Zip -EntryPathRoot "$bkupDbTargetDir" -OutputPath $bkupFilesTargetFileZip -Append 
 
 
 
