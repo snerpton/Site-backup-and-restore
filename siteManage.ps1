@@ -49,12 +49,13 @@ $bkupFilesSrcDir = "C:\inetpub\wwwSites\$domainStart.$domainEndLocal"  # Directo
 $bkupFilesTargetFileZip = "C:\tmp\$domainStart.$domainEndLocal.zip"    # Directory the backup will be placed e.g. C:\tmp 
 $bkupDbSrcDb = "$domainStart.$domainEndLocal"                          # Database we are backing up
 $bkupDbTargetDir = "C:\tmp"
-$bkupDbTargetFile = $bkupDbSrcDb
+$bkupDbTargetFile = "$bkupDbSrcDb.bak"
 
 $restoreFilesSrcFileZip = "C:\tmp\$domainStart.$domainEndLocal.zip"    # Zip file containing the website files we are going to restore.
 $restoreFilesTargetDir = "C:\inetpub\$domainStart.$domainEndRmt"
 $restoreDbSrcDbZip = "C:\tmp\$domainStart.$domainEndLocal.bak.zip"
-$restoreDbSrcDb = "C:\tmp\"
+$restoreDbTargetDir = "C:\tmp\"
+$restoreDbNewName = "$domainStart.$domainEndRmt"
 # -----------------------------------------------------------------------------
 # END: configuration
 # -----------------------------------------------------------------------------
@@ -112,10 +113,10 @@ function RestoreFiles()
     UnZipMe –zipfilename $zipFile.FullName -destination $destinationDir.Fullname
 }
 
-function RestoreDb($dbSrc)
+function RestoreDb($dbSrcFileDir, $dbSrcFileBak, $dbNewName)
 {
-    Write-Host "db src: $dbSrc"
-
+    Write-Host "Restoring database..."
+    DbRestoreNewName -srcDir $dbSrcFileDir -scrFile $dbSrcFileBak -dbNewName $dbNewName
 }
 
 
@@ -137,18 +138,18 @@ function RestoreLocalBackupToRemote()
     #RestoreFiles
     Write-Host "Unzipping database backup..."
     Write-Host "--> src:  $restoreDbSrcDbZip"
-    Write-Host "--> dest: $restoreDbSrcDb"
-    UnZipMe -zipfilename $restoreDbSrcDbZip -destination $restoreDbSrcDb
-    RestoreDb -dbSrc $bkupDbSrcDb
-   
+    Write-Host "--> dest: $restoreDbSrcDbDir"
+    UnZipMe -zipfilename $restoreDbSrcDbZip -destination $restoreDbTargetDir
+    RestoreDb -dbSrcFileDir $restoreDbTargetDir -dbSrcFileBak $bkupDbTargetFile -dbNewName $restoreDbNewName
 }
 
 cls
 $env:PSModulePath = $env:PSModulePath + ";" + "$HOME\Documents\bin\Modules"
+Remove-Module BwtDbMng
 Import-Module BwtDbMng
 
-CreateLocalBackup
-#RestoreLocalBackupToRemote
+#CreateLocalBackup
+RestoreLocalBackupToRemote
 
 
 Remove-Module BwtDbMng

@@ -1,6 +1,6 @@
 # Chris Ashton
 
-function DbBackup($database, $targetDir, $targetFile)
+function DbBackup($database, $targetDir, $targetFileBak)
 {
     #============================================================
     # Backup a Database using PowerShell and SQL Server SMO
@@ -52,7 +52,7 @@ function DbBackup($database, $targetDir, $targetFile)
     $smoBackup.Database = $dbName
     $smoBackup.MediaDescription = "Disk"
     #$smoBackup.Devices.AddDevice($backupDirectory + "\" + $dbName + "_" + $timestamp + ".bak", "File")
-    $smoBackup.Devices.AddDevice($backupDirectory + "\" + $targetFile + ".bak", "File")
+    $smoBackup.Devices.AddDevice($backupDirectory + "\" + $targetFileBak, "File")
     $smoBackup.SqlBackup($server)
 
     #let's confirm, let's list list all backup files
@@ -119,7 +119,7 @@ function DbRestore()
     #See more at: http://www.sswug.org/articlesection/default.aspx?TargetID=44909#sthash.YMwxs7lz.dpuf
 }
 
-function DbRestoreNewName($scrFile)
+function DbRestoreNewName($srcDir, $scrFile, $dbNewName)
 {
     #============================================================
     # Restore a Database using PowerShell and SQL Server SMO
@@ -128,8 +128,8 @@ function DbRestoreNewName($scrFile)
     #============================================================
      
     #clear screen
-    cls
-     
+    #cls
+    
     #load assemblies
     [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.SMO") | Out-Null
 
@@ -139,8 +139,8 @@ function DbRestoreNewName($scrFile)
     [Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.SmoEnum") | Out-Null
      
     #$backupFile = 'C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\Backup\brit-thoracic.local.bak'
-    $backupFile = $scrFile 
-     
+    $backupFile = "$srcDir\$scrFile"
+  
     #we will query the database name from the backup header later
     $server = New-Object ("Microsoft.SqlServer.Management.Smo.Server") "(local)"
     $backupDevice = New-Object("Microsoft.SqlServer.Management.Smo.BackupDeviceItem") ($backupFile, "File")
@@ -160,9 +160,10 @@ function DbRestoreNewName($scrFile)
     "Database Name from Backup Header : " +$smoRestoreDetails.Rows[0]["DatabaseName"]
      
     #give a new database name
-    $smoRestore.Database =$smoRestoreDetails.Rows[0]["DatabaseName"] + "_Copy"
-    $smoRestore.Database = "new-database-name" 
-     
+    #$smoRestore.Database =$smoRestoreDetails.Rows[0]["DatabaseName"] + "_Copy"
+    $smoRestore.Database = "$dbNewName" 
+    Write-Host "Restoring database to new name: $dbNewName"
+    
     #specify new data and log files (mdf and ldf)
     $smoRestoreFile = New-Object("Microsoft.SqlServer.Management.Smo.RelocateFile")
     $smoRestoreLog = New-Object("Microsoft.SqlServer.Management.Smo.RelocateFile")
