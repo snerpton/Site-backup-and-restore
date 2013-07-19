@@ -125,10 +125,11 @@ function CreateLocalBackup()
 {
     # Database must be backed up before files... script error otherwise. Not sure why.
     CreateBackupDb -database $bkupDbSrcDb -targetDir $bkupDbTargetDir -targetFile $bkupDbTargetFile
-    CreateBackupFiles -srcDir $bkupFilesSrcDir -destZip $bkupFilesTargetFileZip
     # I'm unable to add the .bak file to the root of the zip archive, so we put it in its own archive.
     Write-Zip -Path "$bkupDbTargetDir\$bkupDbTargetFile.bak" -OutputPath "$bkupDbTargetDir\brit-thoracic.local.bak.zip"
     Remove-Item "$bkupDbTargetDir\$bkupDbTargetFile.bak"
+    #CreateBackupFiles -srcDir $bkupFilesSrcDir -destZip $bkupFilesTargetFileZip
+    
 }
 
 function RestoreLocalBackupToRemote()
@@ -146,8 +147,8 @@ cls
 $env:PSModulePath = $env:PSModulePath + ";" + "$HOME\Documents\bin\Modules"
 Import-Module BwtDbMng
 
-#CreateLocalBackup
-RestoreLocalBackupToRemote
+CreateLocalBackup
+#RestoreLocalBackupToRemote
 
 
 Remove-Module BwtDbMng
