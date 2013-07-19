@@ -128,8 +128,8 @@ function CreateLocalBackup()
     CreateBackupDb -database $bkupDbSrcDb -targetDir $bkupDbTargetDir -targetFile $bkupDbTargetFile
     # I'm unable to add the .bak file to the root of the zip archive, so we put it in its own archive.
     Write-Zip -Path "$bkupDbTargetDir\$bkupDbTargetFile.bak" -OutputPath "$bkupDbTargetDir\brit-thoracic.local.bak.zip"
-    Remove-Item "$bkupDbTargetDir\$bkupDbTargetFile.bak"
-    #CreateBackupFiles -srcDir $bkupFilesSrcDir -destZip $bkupFilesTargetFileZip
+    Remove-Item "$bkupDbTargetDir\$bkupDbTargetFile"
+    CreateBackupFiles -srcDir $bkupFilesSrcDir -destZip $bkupFilesTargetFileZip
     
 }
 
@@ -145,11 +145,11 @@ function RestoreLocalBackupToRemote()
 
 cls
 $env:PSModulePath = $env:PSModulePath + ";" + "$HOME\Documents\bin\Modules"
-Remove-Module BwtDbMng
+Import-Module Pscx 
 Import-Module BwtDbMng
 
-#CreateLocalBackup
-RestoreLocalBackupToRemote
+CreateLocalBackup
+#RestoreLocalBackupToRemote
 
 
 Remove-Module BwtDbMng
