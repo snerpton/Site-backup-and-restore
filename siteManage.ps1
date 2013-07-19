@@ -100,7 +100,7 @@ function CreateBackupDb($database, $targetDir, $targetFile)
 
 ##### Main program #####
 cls
-#Remove-Module BwtDbMng
+$env:PSModulePath = $env:PSModulePath + ";" + "$HOME\Documents\bin\Modules"
 Import-Module BwtDbMng
 
 # Database must be backed up before files... script error otherwise. Not sure why.
