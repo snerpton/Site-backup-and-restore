@@ -170,7 +170,7 @@ foreach ($cmd in $cmds)
             }
             "RestoreLocalBackupToRemote" 
             { 
-                Write-Host "Doing $cmd" 
+                RestoreLocalBackupToRemote 
             }
             default 
             { 
