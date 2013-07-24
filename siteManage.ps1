@@ -13,6 +13,7 @@
 # import-module c:\sql.backup.psm1
 # restore-SQLdatabase -SQLServer "TAMARYN_PC" -SQLDatabase "SafetySystemsUmbraco" -Path "C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\Backup\SafetySystemsUmbraco_db_201304121355.BAK" -TrustedConnection
 
+param([String[]] $cmds)
 
 # -----------------------------------------------------------------------------
 # START: configuration
@@ -149,10 +150,43 @@ Import-Module Pscx
 Import-Module BwtDbMng
 
 #CreateLocalBackup
-RestoreLocalBackupToRemote
+#RestoreLocalBackupToRemote
+foreach ($cmd in $cmds)
+{
+    if (!$cmd.ToLower().CompareTo("help")) {
+        Write-Host "--> Available commads are:"
+        Write-Host "-->     CreateLocalBackup"
+        Write-Host "-->     RestoreLocalBackupToRemote"
+        Write-Host
+    }
+    else
+    {
+        Write-Host "Executing the command: $cmd"
+        switch ($cmd)
+        {
+            "CreateLocalBackup" 
+            { 
+                CreateLocalBackup 
+            }
+            "RestoreLocalBackupToRemote" 
+            { 
+                Write-Host "Doing $cmd" 
+            }
+            default 
+            { 
+                Write-Host "Invalid command"
+                Write-Host "Use -cmd help to get help."
+                Write-Host "Exiting"
+                Write-Host
+                exit 0
+            }
+        }
+    }
+}
 
 Import-Module Pscx
 Remove-Module BwtDbMng
+
 
 
 
