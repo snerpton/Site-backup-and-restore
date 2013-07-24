@@ -137,6 +137,7 @@ function CreateLocalBackup()
 function RestoreLocalBackupToRemote()
 {
     RestoreFiles
+    Copy-Item "$restoreFilesTargetDir\website\Web.ConnectionStrings.bwtAmazon.config" -Destination "$restoreFilesTargetDir\website\Web.ConnectionStrings.config"
     Write-Host "Unzipping database backup..."
     Write-Host "--> src:  $restoreDbSrcDbZip"
     Write-Host "--> dest: $restoreDbTargetDir"
