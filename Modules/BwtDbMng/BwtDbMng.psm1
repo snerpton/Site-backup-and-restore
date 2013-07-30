@@ -177,6 +177,13 @@ function DbRestoreNewName($srcDir, $scrFile, $dbNewName)
     $smoRestore.RelocateFiles.Add($smoRestoreLog)
      
     #restore database
-    $smoRestore.SqlRestore($server)
+    try
+    {
+        $smoRestore.SqlRestore($server)
+    }
+    catch
+    {
+        $_.Exception.GetBaseException().Message
+    }
     # See more at: http://www.sswug.org/articlesection/default.aspx?TargetID=44909#sthash.YMwxs7lz.dpuf
 }
