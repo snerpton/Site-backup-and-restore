@@ -123,21 +123,43 @@ function RestoreDb($dbSrcFileDir, $dbSrcFileBak, $dbNewName)
 
 ##### Main program #####
 
-function CreateLocalBackup()
+###
+function BackupWebsite()
+{
+    BackupDatabase
+    BackupFiles
+}
+
+function BackupDatabase()
 {
     # Database must be backed up before files... script error otherwise. Not sure why.
     CreateBackupDb -database $bkupDbSrcDb -targetDir $bkupDbTargetDir -targetFile $bkupDbTargetFile
     # I'm unable to add the .bak file to the root of the zip archive, so we put it in its own archive.
     Write-Zip -Path "$bkupDbTargetDir\$bkupDbTargetFile" -OutputPath "$bkupDbTargetDir\brit-thoracic.local.bak.zip"
     Remove-Item "$bkupDbTargetDir\$bkupDbTargetFile"
-    CreateBackupFiles -srcDir $bkupFilesSrcDir -destZip $bkupFilesTargetFileZip
-    
 }
 
-function RestoreLocalBackupToRemote()
+function BackupFiles()
+{
+    CreateBackupFiles -srcDir $bkupFilesSrcDir -destZip $bkupFilesTargetFileZip
+}
+
+
+###
+function RestoreWebsite()
+{
+    RestoreFiles
+    RestoreDatabase
+}
+
+function RestoreFiles()
 {
     RestoreFiles
     Copy-Item "$restoreFilesTargetDir\website\Web.ConnectionStrings.bwtAmazon.config" -Destination "$restoreFilesTargetDir\website\Web.ConnectionStrings.config"
+}
+
+function RestoreDatabase()
+{
     Write-Host "Unzipping database backup..."
     Write-Host "--> src:  $restoreDbSrcDbZip"
     Write-Host "--> dest: $restoreDbTargetDir"
@@ -155,23 +177,27 @@ Import-Module BwtDbMng
 foreach ($cmd in $cmds)
 {
     if (!$cmd.ToLower().CompareTo("help")) {
-        Write-Host "--> Available commads are:"
-        Write-Host "-->     CreateLocalBackup"
-        Write-Host "-->     RestoreLocalBackupToRemote"
-        Write-Host
+        Write-Host "--> Available commands are:"
+        Write-Host "-->     BackupWebsite    Full backup of the website files and database."
+        Write-Host "-->     BackupDatabase   Backup database only."
+        Write-Host "-->     BackupFiles      Backup files only."
+        Write-Host "-->     RestoreWebsite   Restore both website files and database."
+        Write-Host "-->     RestoreFiles     Restore file only."
+        Write-Host "-->     RestoreDatabase  Restore database only."
+        Write-Host "     "
     }
     else
     {
         Write-Host "Executing the command: $cmd"
         switch ($cmd)
         {
-            "CreateLocalBackup" 
+            "BackupWebsite" 
             { 
-                CreateLocalBackup 
+                BackupWebsite 
             }
-            "RestoreLocalBackupToRemote" 
+            "RestoreWebsite" 
             { 
-                RestoreLocalBackupToRemote 
+                RestoreWebsite 
             }
             default 
             { 
