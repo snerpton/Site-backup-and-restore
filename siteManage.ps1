@@ -13,50 +13,40 @@
 # import-module c:\sql.backup.psm1
 # restore-SQLdatabase -SQLServer "TAMARYN_PC" -SQLDatabase "SafetySystemsUmbraco" -Path "C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\Backup\SafetySystemsUmbraco_db_201304121355.BAK" -TrustedConnection
 
-param([String[]] $cmds)
+
+[CmdletBinding()]
+Param(
+  [Parameter(Mandatory=$True,Position=1)]
+   [string]$configFile,
+	
+   [Parameter(Mandatory=$True)]
+   [string]$command
+)
+
+# Stop on first error!
+$ErrorActionPreference = "Stop"
+
+#param([String[]] $configFile, $cmds)
 
 # -----------------------------------------------------------------------------
 # START: configuration
 # -----------------------------------------------------------------------------
+
 #$domainStart = "brit-thoracic"
-#$domainEndRmt = ".blueprintwebtech.com"
-#$domainEndLocal = ".local"
-#$repoName = "safetysystemsuk-dev"
-
-#$pathToZip = "C:\tmp\" + $domainStart + $domainEndLocal + ".zip"
-#$targetDir = "C:\inetpub\" + $domainStart + $domainEndRmt
-
-#$webRootArchive = $pathToZip
-#$webRootDestDir = "$targetDir" # This is really the project root, as this dir contains the repo including the web root
-
-#$hgRepoUser = "chrisashton"
-#$hgRepoPass = "Chr1sA5hton"
-#$hgRepoSrc = "https://$hgRepoUser" + ":$hgRepoPass@bitbucket.org/collaborate_dev/" + $repoName
-#$hgRepoDest = $targetDir
-
-#$webConfigFile = "$targetDir\website\web.config"
-
-#$dbBkupFilePrefix = "$targetDir\" + $domainStart + $domainEndLocal  + "_20130717183041" + $domainEnd
-#$dbRestoreDir = "C:\tmp\"
-
-#$ErrorActionPreference = "Stop" # Stop script on first error
-
-#####
-$domainStart = "brit-thoracic"
-$domainEndRmt = "blueprintwebtech.com"
-$domainEndLocal = "local"
-
-$bkupFilesSrcDir = "C:\inetpub\wwwSites\$domainStart.$domainEndLocal"  # Directory we are backing up. e.g. C:\inetpub\wwwSites\somedomain.local
-$bkupFilesTargetFileZip = "C:\tmp\$domainStart.$domainEndLocal.zip"    # Directory the backup will be placed e.g. C:\tmp 
-$bkupDbSrcDb = "$domainStart.$domainEndLocal"                          # Database we are backing up
-$bkupDbTargetDir = "C:\tmp"
-$bkupDbTargetFile = "$bkupDbSrcDb.bak"
-
-$restoreFilesSrcFileZip = "C:\tmp\$domainStart.$domainEndLocal.zip"    # Zip file containing the website files we are going to restore.
-$restoreFilesTargetDir = "C:\inetpub\$domainStart.$domainEndRmt"
-$restoreDbSrcDbZip = "C:\tmp\$domainStart.$domainEndLocal.bak.zip"
-$restoreDbTargetDir = "C:\tmp\"
-$restoreDbNewName = "$domainStart.$domainEndRmt"
+#$domainEndRmt = "blueprintwebtech.com"
+#$domainEndLocal = "local"
+#
+#$bkupFilesSrcDir = "C:\inetpub\wwwSites\$domainStart.$domainEndLocal"  # Directory we are backing up. e.g. C:\inetpub\wwwSites\somedomain.local
+#$bkupFilesTargetFileZip = "C:\tmp\$domainStart.$domainEndLocal.zip"    # Directory the backup will be placed e.g. C:\tmp 
+#$bkupDbSrcDb = "$domainStart.$domainEndLocal"                          # Database we are backing up
+#$bkupDbTargetDir = "C:\tmp"
+#$bkupDbTargetFile = "$bkupDbSrcDb.bak"
+#
+#$restoreFilesSrcFileZip = "C:\tmp\$domainStart.$domainEndLocal.zip"    # Zip file containing the website files we are going to restore.
+#$restoreFilesTargetDir = "C:\inetpub\$domainStart.$domainEndRmt"
+#$restoreDbSrcDbZip = "C:\tmp\$domainStart.$domainEndLocal.bak.zip"
+#$restoreDbTargetDir = "C:\tmp\"
+#$restoreDbNewName = "$domainStart.$domainEndRmt"
 # -----------------------------------------------------------------------------
 # END: configuration
 # -----------------------------------------------------------------------------
@@ -123,6 +113,109 @@ function RestoreDb($dbSrcFileDir, $dbSrcFileBak, $dbNewName)
 
 ##### Main program #####
 
+function Help()
+{
+    Write-Host "--> Backup commands:"
+    Write-Host "-->     BackupWebsite    Full backup of the website files and database."
+    Write-Host "-->     BackupDatabase   Backup database only."
+    Write-Host "-->     BackupFiles      Backup files only."
+    Write-Host "--> "
+    Write-Host "--> Restore commands:"
+    Write-Host "-->     RestoreWebsite   Restore both website files and database."
+    Write-Host "-->     RestoreFiles     Restore file only."
+    Write-Host "-->     RestoreDatabase  Restore database only."
+    Write-Host "-->     RestoreDatabase  Restore database only."
+    Write-Host "--> "
+    Write-Host "--> Other commands:"
+    Write-Host "-->     GenerateSampleConfig    Generates a sample script configuration file."
+    Write-Host "-->     Help                    This help function."
+    Write-Host "--> "
+    Write-Host "    "
+}
+
+
+function GenerateSampleConfig()
+{
+'
+###############################################################################
+### Some general settings #####################################################
+###############################################################################
+# Bare domain, used on both local and remote environments. 
+# e.g. "some-domain"
+$domainStart = "some-domain"
+
+# The part of the domain higher than the bare domain, typically "com", "co.uk". 
+# Note the absence of the leading ".".
+$domainEndRmt = "co.uk"
+
+# The part of the domain higher than the bare domain on the local machine, 
+# typically "local". Note the absence of the leading ".".
+$domainEndLocal = "local"
+
+
+###############################################################################
+# Backup settings #############################################################
+###############################################################################
+# The directory we are backing up. 
+# e.g "C:\inetpub\wwwSites\$domainStart.$domainEndLocal"
+#  or "C:\inetpub\wwwSites\somedomain.local"
+$bkupFilesSrcDir = "C:\inetpub\wwwSites\$domainStart.$domainEndLocal"
+
+# Directory the backup will be placed.
+# e.g. "C:\tmp"
+$bkupDbTargetDir = "C:\tmp"
+
+# Destination path and file for the zipped website files.
+# e.g. "$bkupDbTargetDir\$domainStart.$domainEndLocal.zip" 
+#  or  "C:\tmp\some-domain.local.zip".
+$bkupFilesTargetFileZip = "$bkupDbTargetDir\$domainStart.$domainEndLocal.zip"    
+
+# Database we are backing up.
+# e.g. "$domainStart.$domainEndLocal"
+#  or  "some-domain.local"
+$bkupDbSrcDb = "$domainStart.$domainEndLocal" 
+
+
+# Destination file for the database. No path.
+# e.g. "$bkupDbSrcDb.bak"
+#  or  "some-domain.local.bak"
+$bkupDbTargetFile = "$bkupDbSrcDb.bak"
+
+
+###############################################################################
+# Restore settings ############################################################
+###############################################################################
+# Base directory containing the zipped files and database we will restore.
+# e.g. "C:\tmp\"
+$restoreDbTargetDir = "C:\tmp\"
+
+# Zip file and path containing the website files we want to restore
+# e.g. "$restoreDbTargetDir\$domainStart.$domainEndLocal.zip"
+#  or  "C:\tmp\some-domain.local"
+$restoreFilesSrcFileZip = "$restoreDbTargetDir\$domainStart.$domainEndLocal.zip"    
+
+# Destination for the restored website files.
+# e.g. "C:\inetpub\$domainStart.$domainEndRmt"
+#  or  "C:\inetpub\some-domain.co.uk"
+$restoreFilesTargetDir = "C:\inetpub\$domainStart.$domainEndRmt"
+
+# Zip file and path containing the database we want to restore.
+# e.g. "$restoreDbTargetDir\$domainStart.$domainEndLocal.bak.zip"
+#  or  "C:\tmp\$domainStart.$domainEndLocal.bak.zip"
+$restoreDbSrcDbZip = "C:\tmp\$domainStart.$domainEndLocal.bak.zip"
+
+# Destination database
+# e.g. "$domainStart.$domainEndRmt"
+#  or  "some-domain.co.uk"
+$restoreDbNewName = "$domainStart.$domainEndRmt"
+#
+#
+#
+' | Out-File config-MACHINE-DOMAIN-SAMPLE.ps1
+
+}
+
+
 ###
 function BackupWebsite()
 {
@@ -172,44 +265,64 @@ $env:PSModulePath = $env:PSModulePath + ";" + "$HOME\Documents\bin\Modules"
 Import-Module Pscx 
 Import-Module BwtDbMng
 
+
+
+Write-Host "domainStart: $domainStart"
+
+
 #CreateLocalBackup
 #RestoreLocalBackupToRemote
-foreach ($cmd in $cmds)
+
+if (!$command.ToLower().CompareTo("help")) {
+    Help
+}
+elseif (!$command.ToLower().CompareTo("generatesampleconfig"))
 {
-    if (!$cmd.ToLower().CompareTo("help")) {
-        Write-Host "--> Available commands are:"
-        Write-Host "-->     BackupWebsite    Full backup of the website files and database."
-        Write-Host "-->     BackupDatabase   Backup database only."
-        Write-Host "-->     BackupFiles      Backup files only."
-        Write-Host "-->     RestoreWebsite   Restore both website files and database."
-        Write-Host "-->     RestoreFiles     Restore file only."
-        Write-Host "-->     RestoreDatabase  Restore database only."
-        Write-Host "     "
-    }
-    else
+    GenerateSampleConfig
+}
+else
+{
+    . .\$configFile
+    Write-Host "domainStart: $domainStart"
+
+    Write-Host "Executing the command: $cmd"
+    switch ($command)
     {
-        Write-Host "Executing the command: $cmd"
-        switch ($cmd)
-        {
-            "BackupWebsite" 
-            { 
-                BackupWebsite 
-            }
-            "RestoreWebsite" 
-            { 
-                RestoreWebsite 
-            }
-            default 
-            { 
-                Write-Host "Invalid command"
-                Write-Host "Use -cmd help to get help."
-                Write-Host "Exiting"
-                Write-Host
-                exit 0
-            }
+        "BackupWebsite" 
+        { 
+            BackupWebsite 
+        }
+        "BackupDatabase" 
+        { 
+            BackupDatabase 
+        }
+        "BackupFiles" 
+        { 
+            BackupFiles 
+        }
+        "RestoreWebsite" 
+        { 
+            RestoreWebsite 
+        }
+        "RestoreFiles" 
+        { 
+            RestoreFiles 
+        }
+        "RestoreDatabase" 
+        { 
+            RestoreDatabase 
+        }                      
+        default 
+        { 
+            Write-Host "Invalid command"
+            Write-Host "Use -cmd help to get help."
+            Write-Host "Exiting"
+            Write-Host
+            exit 0
         }
     }
 }
+
 
 Import-Module Pscx
 Remove-Module BwtDbMng
