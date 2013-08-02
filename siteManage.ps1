@@ -229,6 +229,9 @@ function BackupWebsite()
 function BackupDatabase()
 {
     # Database must be backed up before files... script error otherwise. Not sure why.
+    Write-Host "Backing up database: $bkupDbSrcDb"
+    Write-Host "Dir destination: $bkupDbTargetDir"
+    Write-Host "File (.bak) destination: $bkupDbTargetFile"
     CreateBackupDb -database $bkupDbSrcDb -targetDir $bkupDbTargetDir -targetFile $bkupDbTargetFile
     # I'm unable to add the .bak file to the root of the zip archive, so we put it in its own archive.
     Write-Zip -Path "$bkupDbTargetDir\$bkupDbTargetFile" -OutputPath "$bkupDbTargetDir\brit-thoracic.local.bak.zip"
