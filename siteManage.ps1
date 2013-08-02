@@ -91,6 +91,9 @@ function CreateBackupFiles($srcDir, $destZip)
 function CreateBackupDb($database, $targetDir, $targetFile)
 {
     Write-Host "Backing up database..."
+    Write-Host "Backing up database: $database"
+    Write-Host "Dir destination: $targetDir"
+    Write-Host "File (.bak) destination: $targetFile"
     DbBackup -database $database -targetDir $targetDir -targetFile $targetFile
 }
 
@@ -234,7 +237,7 @@ function BackupDatabase()
     Write-Host "File (.bak) destination: $bkupDbTargetFile"
     CreateBackupDb -database $bkupDbSrcDb -targetDir $bkupDbTargetDir -targetFile $bkupDbTargetFile
     # I'm unable to add the .bak file to the root of the zip archive, so we put it in its own archive.
-    Write-Zip -Path "$bkupDbTargetDir\$bkupDbTargetFile" -OutputPath "$bkupDbTargetDir\brit-thoracic.local.bak.zip"
+    Write-Zip -Path "$bkupDbTargetDir\$bkupDbTargetFile" -OutputPath "$bkupDbTargetDir\$bkupDbTargetFile.zip"
     Remove-Item "$bkupDbTargetDir\$bkupDbTargetFile"
 }
 
