@@ -266,7 +266,7 @@ function RestoreDatabase()
     Write-Host "--> src:  $restoreDbSrcDbZip"
     Write-Host "--> dest: $restoreDbTargetDir"
     UnZipMe -zipfilename $restoreDbSrcDbZip -destination $restoreDbTargetDir
-    RestoreDb -dbSrcFileDir $restoreDbTargetDir -dbSrcFileBak $bkupDbTargetFile -dbNewName $restoreDbNewName
+    RestoreDb -dbSrcFileDir $restoreDbTargetDir -dbSrcFileBak $restoreDbOldName -dbNewName $restoreDbNewName
 }
 
 cls

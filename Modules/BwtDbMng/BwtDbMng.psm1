@@ -1,4 +1,5 @@
 # Chris Ashton
+# http://www.sqlmusings.com/2009/06/01/how-to-restore-sql-server-databases-using-smo-and-powershell/
 
 function DbBackup($database, $targetDir, $targetFileBak)
 {
