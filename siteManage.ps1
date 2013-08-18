@@ -229,7 +229,7 @@ function BackupWebsite()
     BackupFiles
 }
 
-function BackupDatabase()
+function BackupWebsiteDatabase()
 {
     # Database must be backed up before files... script error otherwise. Not sure why.
     Write-Host "Backing up database: $bkupDbSrcDb"
@@ -241,7 +241,7 @@ function BackupDatabase()
     Remove-Item "$bkupDbTargetDir\$bkupDbTargetFile"
 }
 
-function BackupFiles()
+function BackupWebsiteFiles()
 {
     CreateBackupFiles -srcDir $bkupFilesSrcDir -destZip $bkupFilesTargetFileZip
 }
@@ -254,13 +254,13 @@ function RestoreWebsite()
     RestoreDatabase
 }
 
-function RestoreFiles()
+function RestoreWebsiteFiles()
 {
     RestoreFiles
     Copy-Item "$restoreFilesTargetDir\website\Web.ConnectionStrings.bwtAmazon.config" -Destination "$restoreFilesTargetDir\website\Web.ConnectionStrings.config"
 }
 
-function RestoreDatabase()
+function RestoreWebsiteDatabase()
 {
     Write-Host "Unzipping database backup..."
     Write-Host "--> src:  $restoreDbSrcDbZip"
@@ -303,11 +303,11 @@ else
         }
         "BackupDatabase" 
         { 
-            BackupDatabase 
+            BackupWebsiteDatabase 
         }
         "BackupFiles" 
         { 
-            BackupFiles 
+            BackupWebsiteFiles 
         }
         "RestoreWebsite" 
         { 
@@ -315,11 +315,11 @@ else
         }
         "RestoreFiles" 
         { 
-            RestoreFiles 
+            RestoreWebsiteFiles 
         }
         "RestoreDatabase" 
         { 
-            RestoreDatabase 
+            RestoreWebsiteDatabase 
         }                      
         default 
         { 
