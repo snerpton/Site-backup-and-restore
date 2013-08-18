@@ -85,6 +85,8 @@ function ZipMe($src,$zipFile)
 function CreateBackupFiles($srcDir, $destZip)
 {
     Write-Host "Backing up files..."
+    Write-Host "srcDir: $srcDir"
+    Write-Host "destZip: $destZip"
     ZipMe -src $srcDir -zipFile $destZip
 }
 
@@ -225,8 +227,8 @@ $restoreDbNewName = "$domainStart.$domainEndRmt"
 ###
 function BackupWebsite()
 {
-    BackupDatabase
-    BackupFiles
+    BackupWebsiteDatabase
+    BackupWebsiteFiles
 }
 
 function BackupWebsiteDatabase()
