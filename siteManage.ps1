@@ -219,7 +219,7 @@ $restoreDbNewName = "$domainStart.$domainEndRmt"
 #
 #
 #
-' | Out-File config-MACHINE-DOMAIN-SAMPLE.ps1
+' | Out-File -Encoding utf8 config-MACHINE-DOMAIN-SAMPLE.ps1
 
 }
 
