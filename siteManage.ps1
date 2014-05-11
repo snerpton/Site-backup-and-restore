@@ -148,40 +148,35 @@ function GenerateSampleConfig()
 ###############################################################################
 ### Some general settings #####################################################
 ###############################################################################
-# Bare domain, used on both local and remote environments. 
-# e.g. "some-domain"
-$domainStart = "some-domain"
+# Full domain of the backedup website files and database.
+# e.g "company-dev.some-domain.com"
+$bkupDomain = "company-dev.some-domain.com"
 
-# The part of the domain higher than the bare domain, typically "com", "co.uk". 
-# Note the absence of the leading ".".
-$domainEndRestored = "co.uk"
-
-# The part of the domain higher than the bare domain on the local machine, 
-# typically "local". Note the absence of the leading ".".
-$domainEndBackedup = "local"
-
+# Full domain of restored website files and database.
+# e.g "some-domain.local"
+$restoreDomain = "some-domain.local"
 
 ###############################################################################
 # Backup settings #############################################################
 ###############################################################################
 # The directory we are backing up. 
-# e.g "C:\inetpub\wwwSites\$domainStart.$domainEndLocal"
+# e.g "C:\inetpub\wwwSites\$restoreDomain"
 #  or "C:\inetpub\wwwSites\somedomain.local"
-$bkupFilesSrcDir = "C:\inetpub\wwwSites\$domainStart.$domainEndRestored"
+$bkupFilesSrcDir = "C:\inetpub\wwwSites\$restoreDomain"
 
 # Directory the backup will be placed.
 # e.g. "C:\tmp"
 $bkupDbTargetDir = "C:\tmp"
 
 # Destination path and file for the zipped website files.
-# e.g. "$bkupDbTargetDir\$domainStart.$domainEndLocal.zip" 
+# e.g. "$bkupDbTargetDir\$restoreDomain.zip" 
 #  or  "C:\tmp\some-domain.local.zip".
-$bkupFilesTargetFileZip = "$bkupDbTargetDir\$domainStart.$domainEndRestored.zip"    
+$bkupFilesTargetFileZip = "$bkupDbTargetDir\$restoreDomain.zip"    
 
 # Database we are backing up.
-# e.g. "$domainStart.$domainEndBackedup"
+# e.g. "$restoreDomain"
 #  or  "some-domain.local"
-$bkupDbSrcDb = "$domainStart.$domainEndRestored" 
+$bkupDbSrcDb = "$restoreDomain" 
 
 # Destination file for the database. No path.
 # e.g. "$bkupDbSrcDb.bak"
@@ -198,34 +193,34 @@ $bkupDbTargetFile = "$bkupDbSrcDb.bak"
 $restoreDbTargetDir = "C:\tmp\"
 
 # Zip file and path containing the website files we want to restore
-# e.g. "$restoreDbTargetDir\$domainStart.$domainEndBackedup.zip"
-#  or  "C:\tmp\some-domain.local"
-$restoreFilesSrcFileZip = "$restoreDbTargetDir\$domainStart.$domainEndBackedup.zip"    
+# e.g. "$restoreDbTargetDir\$bkupDomain.zip"
+#  or  "C:\tmp\some-domain.local.zip"
+$restoreFilesSrcFileZip = "$restoreDbTargetDir\$bkupDomain.zip"    
 
 # Destination for the restored website files.
-# e.g. "C:\inetpub\$domainStart.$domainEndRestored"
-#  or  "C:\inetpub\some-domain.co.uk"
-$restoreFilesTargetDir = "C:\inetpub\wwwSites\$domainStart.$domainEndRestored"
+# e.g. "C:\inetpub\wwwSites\$restoreDomain"
+#  or  "C:\inetpub\wwwSites\some-domain.co.uk"
+$restoreFilesTargetDir = "C:\inetpub\wwwSites\$restoreDomain"
 
 # Zip file and path containing the database we want to restore.
-# e.g. "$restoreDbTargetDir\$domainStart.$domainEndBackedup.bak.zip"
-#  or  "C:\tmp\$domainStart.$domainEndLocal.bak.zip"
-$restoreDbSrcDbZip = "C:\tmp\$domainStart.$domainEndBackedup.bak.zip"
+# e.g. "$restoreDbTargetDir\$bkupDomain.bak.zip"
+#  or  "C:\tmp\company-dev.some-domain.com.bak.zip"
+$restoreDbSrcDbZip = "C:\tmp\$bkupDomain.bak.zip"
 
 # File name of database backup we are restoring from
 # e.g. $domainStart.$domainEndLocal.bak
-#  or  some-domain.co.uk.bak
-$restoreDbOldName = "$domainStart.$domainEndBackedup.bak"
+#  or  company-dev.some-domain.com.bak
+$restoreDbOldName = "$bkupDomain.bak"
 
 
 # Destination database
 # e.g. "$domainStart.$domainEndRestored"
 #  or  "some-domain.co.uk"
-$restoreDbNewName = "$domainStart.$domainEndRestored"
+$restoreDbNewName = "$restoreDomain"
 #
 #
 #
-' | Out-File -Encoding utf8 config-MACHINE-DOMAIN-SAMPLE.ps1
+' | Out-File -Encoding utf8 config-DOMAIN-SITE-BKUP.ps1
 
 }
 
