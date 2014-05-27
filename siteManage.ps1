@@ -12,7 +12,9 @@
 # http://andrewmorgan.ie/2011/12/14/backup-and-restore-sql-databases-using-powershell/
 # import-module c:\sql.backup.psm1
 # restore-SQLdatabase -SQLServer "TAMARYN_PC" -SQLDatabase "SafetySystemsUmbraco" -Path "C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\Backup\SafetySystemsUmbraco_db_201304121355.BAK" -TrustedConnection
-
+#
+# Requires modules:
+# - Pscx-2.1.1
 
 [CmdletBinding()]
 Param(
@@ -253,8 +255,8 @@ function BackupWebsiteFiles()
 ###
 function RestoreWebsite()
 {
-    RestoreFiles
-    RestoreDatabase
+    RestoreWebsiteFiles
+    RestoreWebsiteDatabase
 }
 
 function RestoreWebsiteFiles()
