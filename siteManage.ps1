@@ -255,8 +255,8 @@ function BackupWebsiteFiles()
 ###
 function RestoreWebsite()
 {
-    RestoreWebsiteFiles
     RestoreWebsiteDatabase
+    RestoreWebsiteFiles
 }
 
 function RestoreWebsiteFiles()
