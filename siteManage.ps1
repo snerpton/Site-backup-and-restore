@@ -83,6 +83,18 @@ function ZipMe($src,$zipFile)
 
 
 
+function CreateDirIfNeeded($dir)
+{
+    # Create folder if it doesn't exist 
+     if (!(Test-Path -path $dir)) {
+        Write-Host "Creating $dir"
+        New-Item $dir -Type Directory
+        Write-Host "Created $dir"
+     }
+}
+
+
+
 ##### Actual functions we use in main #####
 function CreateBackupFiles($srcDir, $destZip)
 {
@@ -168,7 +180,9 @@ $bkupFilesSrcDir = "C:\inetpub\wwwSites\$restoreDomain"
 
 # Directory the backup will be placed.
 # e.g. "C:\tmp"
-$bkupDbTargetDir = "C:\tmp"
+#   or "C:\tmp\$dateTime"
+#   or "C:\tmp\$dateTime $restoreDomain"
+$bkupDbTargetDir = "C:\tmp\$dateTime $restoreDomain"
 
 # Destination path and file for the zipped website files.
 # e.g. "$bkupDbTargetDir\$restoreDomain.zip" 
@@ -239,6 +253,7 @@ function BackupWebsiteDatabase()
     # Database must be backed up before files... script error otherwise. Not sure why.
     Write-Host "Backing up database: $bkupDbSrcDb"
     Write-Host "Dir destination: $bkupDbTargetDir"
+    CreateDirIfNeeded -dir $bkupDbTargetDir
     Write-Host "File (.bak) destination: $bkupDbTargetFile"
     CreateBackupDb -database $bkupDbSrcDb -targetDir $bkupDbTargetDir -targetFile $bkupDbTargetFile
     # I'm unable to add the .bak file to the root of the zip archive, so we put it in its own archive.
@@ -248,6 +263,7 @@ function BackupWebsiteDatabase()
 
 function BackupWebsiteFiles()
 {
+    CreateDirIfNeeded -dir $bkupDbTargetDir
     CreateBackupFiles -srcDir $bkupFilesSrcDir -destZip $bkupFilesTargetFileZip
 }
 

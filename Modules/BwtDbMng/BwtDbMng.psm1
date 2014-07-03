@@ -60,7 +60,9 @@ function DbBackup($database, $targetDir, $targetFileBak)
     $directory = Get-ChildItem $backupDirectory
     #list only files that end in .bak, assuming this is your convention for all backup files
     $backupFilesList = $directory | where {$_.extension -eq ".bak"}
-    $backupFilesList | Format-Table Name, LastWriteTime
+    $backupFilesList | 
+    Out-Default  #God only know why we need this... CA
+    Format-Table Name, LastWriteTime
 
     #See more at: http://www.sswug.org/articlesection/default.aspx?TargetID=44909#sthash.YMwxs7lz.dpuf
 }
