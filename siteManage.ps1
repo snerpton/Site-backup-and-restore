@@ -174,9 +174,9 @@ $restoreDomain = "some-domain.local"
 # Backup settings #############################################################
 ###############################################################################
 # The directory we are backing up. 
-# e.g "C:\inetpub\wwwSites\$restoreDomain"
-#  or "C:\inetpub\wwwSites\somedomain.local"
-$bkupFilesSrcDir = "C:\inetpub\wwwSites\$restoreDomain"
+# e.g "C:\inetpub\www-dev\$restoreDomain"
+#  or "C:\inetpub\www-dev\somedomain.local"
+$bkupFilesSrcDir = "C:\inetpub\www-dev\$restoreDomain"
 
 # Directory the backup will be placed.
 # e.g. "C:\tmp"
@@ -214,9 +214,9 @@ $restoreDbTargetDir = "C:\tmp\"
 $restoreFilesSrcFileZip = "$restoreDbTargetDir\$bkupDomain.zip"    
 
 # Destination for the restored website files.
-# e.g. "C:\inetpub\wwwSites\$restoreDomain"
-#  or  "C:\inetpub\wwwSites\some-domain.co.uk"
-$restoreFilesTargetDir = "C:\inetpub\wwwSites\$restoreDomain"
+# e.g. "C:\inetpub\www-dev\$restoreDomain"
+#  or  "C:\inetpub\www-dev\some-domain.co.uk"
+$restoreFilesTargetDir = "C:\inetpub\www-dev\$restoreDomain"
 
 # Zip file and path containing the database we want to restore.
 # e.g. "$restoreDbTargetDir\$bkupDomain.bak.zip"
