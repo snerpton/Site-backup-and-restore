@@ -170,6 +170,9 @@ $bkupDomain = "company-dev.some-domain.com"
 # e.g "some-domain.local"
 $restoreDomain = "some-domain.local"
 
+# Date-time stamp
+$dateTime = get-date -format "yyMMdd-hhmmss"
+
 ###############################################################################
 # Backup settings #############################################################
 ###############################################################################
