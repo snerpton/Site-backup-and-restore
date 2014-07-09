@@ -294,6 +294,13 @@ function RestoreWebsiteDatabase()
 }
 
 cls
+# Reduce script priority. Script is often run on live servers and we don't want
+# to degrade site performace whilst script is running.
+# Available priority values: Lowest, BelowNormal, Normal, AboveNormal, Highest
+[System.Threading.Thread]::CurrentThread.Priority = 'Lowest'
+
+
+#Import required modules
 $env:PSModulePath = $env:PSModulePath + ";" + "$HOME\Documents\bin\Modules"
 Import-Module Pscx 
 Import-Module BwtDbMng
