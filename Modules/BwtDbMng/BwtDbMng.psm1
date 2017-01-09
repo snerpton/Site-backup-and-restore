@@ -30,7 +30,8 @@ function DbBackup($database, $targetDir, $targetFileBak)
     [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.SmoEnum") | Out-Null
 
     #create a new server object
-    $server = New-Object ("Microsoft.SqlServer.Management.Smo.Server") "(local)"
+    #$server = New-Object ("Microsoft.SqlServer.Management.Smo.Server") "(local)"
+    $server = New-Object ("Microsoft.SqlServer.Management.Smo.Server") "localhost\SQLEXPRESS2014"
     #$backupDirectory = $server.Settings.BackupDirectory
     $backupDirectory = "$targetDir" 
      

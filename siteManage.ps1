@@ -78,7 +78,11 @@ function ZipMe($src,$zipFile)
     Write-Host "Zipping files..."
     Import-Module PSCX
     #Get-ChildItem C:\inetpub\lyonswilson-solicitors.co.uk\* | Write-Zip -OutputPath C:\tmp\lyonswilson-solicitors.co.uk.zip
-    gci $src -rec | Write-Zip -EntryPathRoot $src -OutputPath $zipFile
+    #gci $src -rec | Write-Zip -EntryPathRoot $src -OutputPath $zipFile
+    #if (-not (test-path "$env:ProgramFiles\7-Zip\7z.exe")) {throw "$env:ProgramFiles\7-Zip\7z.exe needed"} 
+    #set-alias sz "$env:ProgramFiles\7-Zip\7z.exe"
+
+    sz a -t7z "$zipFile" "$src" "-x!assets\*"
 }
 
 
@@ -179,7 +183,7 @@ $dateTime = get-date -format "yyMMdd-HHmmss"
 # The directory we are backing up. 
 # e.g "C:\inetpub\www-dev\$restoreDomain"
 #  or "C:\inetpub\www-dev\somedomain.local"
-$bkupFilesSrcDir = "C:\inetpub\www-dev\$restoreDomain"
+$bkupFilesSrcDir = "C:\inetpub\wwwSites\$restoreDomain"
 
 # Directory the backup will be placed.
 # e.g. "C:\tmp"
@@ -190,7 +194,7 @@ $bkupDbTargetDir = "C:\tmp\$dateTime $restoreDomain"
 # Destination path and file for the zipped website files.
 # e.g. "$bkupDbTargetDir\$restoreDomain.zip" 
 #  or  "C:\tmp\some-domain.local.zip".
-$bkupFilesTargetFileZip = "$bkupDbTargetDir\$restoreDomain.zip"    
+$bkupFilesTargetFileZip = "$bkupDbTargetDir\$restoreDomain.7z"    
 
 # Database we are backing up.
 # e.g. "$restoreDomain"
@@ -219,12 +223,12 @@ $restoreFilesSrcFileZip = "$restoreDbTargetDir\$bkupDomain.zip"
 # Destination for the restored website files.
 # e.g. "C:\inetpub\www-dev\$restoreDomain"
 #  or  "C:\inetpub\www-dev\some-domain.co.uk"
-$restoreFilesTargetDir = "C:\inetpub\www-dev\$restoreDomain"
+$restoreFilesTargetDir = "C:\inetpub\wwwSites\$restoreDomain"
 
 # Zip file and path containing the database we want to restore.
 # e.g. "$restoreDbTargetDir\$bkupDomain.bak.zip"
 #  or  "C:\tmp\company-dev.some-domain.com.bak.zip"
-$restoreDbSrcDbZip = "C:\tmp\$bkupDomain.bak.zip"
+$restoreDbSrcDbZip = "C:\tmp\$bkupDomain.bak.7z"
 
 # File name of database backup we are restoring from
 # e.g. $domainStart.$domainEndLocal.bak
@@ -260,7 +264,8 @@ function BackupWebsiteDatabase()
     Write-Host "File (.bak) destination: $bkupDbTargetFile"
     CreateBackupDb -database $bkupDbSrcDb -targetDir $bkupDbTargetDir -targetFile $bkupDbTargetFile
     # I'm unable to add the .bak file to the root of the zip archive, so we put it in its own archive.
-    Write-Zip -Path "$bkupDbTargetDir\$bkupDbTargetFile" -OutputPath "$bkupDbTargetDir\$bkupDbTargetFile.zip"
+    #Write-Zip -Path "$bkupDbTargetDir\$bkupDbTargetFile" -OutputPath "$bkupDbTargetDir\$bkupDbTargetFile.zip"
+    ZipMe -src "$bkupDbTargetDir\$bkupDbTargetFile" -zipFile "$bkupDbTargetDir\$bkupDbTargetFile.7z"
     Remove-Item "$bkupDbTargetDir\$bkupDbTargetFile"
 }
 
@@ -302,8 +307,12 @@ cls
 
 #Import required modules
 $env:PSModulePath = $env:PSModulePath + ";" + "$HOME\Documents\bin\Modules"
-Import-Module Pscx 
+#Import-Module Pscx 
 Import-Module BwtDbMng
+
+
+if (-not (test-path ".\bin\7za.exe")) {throw ".\7za.exe needed"}
+set-alias sz ".\bin\7za.exe"
 
 
 
@@ -364,7 +373,7 @@ else
 }
 
 
-Import-Module Pscx
+#Remove-Module Pscx
 Remove-Module BwtDbMng
 
 
