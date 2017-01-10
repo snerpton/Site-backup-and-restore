@@ -86,7 +86,8 @@ function ZipMe($src,$zipFile)
     #if (-not (test-path "$env:ProgramFiles\7-Zip\7z.exe")) {throw "$env:ProgramFiles\7-Zip\7z.exe needed"} 
     #set-alias sz "$env:ProgramFiles\7-Zip\7z.exe"
 
-    sz a -t7z "$zipFile" "$src" "-x!assets\*"
+    #sz a -xr!assets -xr!App_Data\cache\* -xr!website\App_Data\TEMP -t7z "$zipFile" "$src"
+    sz a -t7z "$zipFile" "$src" 
 }
 
 
