@@ -59,16 +59,20 @@ $ErrorActionPreference = "Stop"
 
 function UnZipMe($zipfilename,$destination) 
 { 
-    $shellApplication = new-object -com shell.application 
-    $zipPackage = $shellApplication.NameSpace($zipfilename) 
-    $destinationFolder = $shellApplication.NameSpace($destination) 
-    Write-Host "zipPackage: $zipPackage"
-    Write-Host "destinationFolder: $destinationFolder"
+    # $shellApplication = new-object -com shell.application 
+    # $zipPackage = $shellApplication.NameSpace($zipfilename) 
+    # $destinationFolder = $shellApplication.NameSpace($destination) 
+    Write-Host "zipPackage: $zipfilename $zipPackage"
+    Write-Host "destinationFolder: $destination $destinationFolder"
+
+    #Built-in zip
     #$destinationFolder.CopyHere($zipPackage.Items(),20)
     #   4 = Do not display a progress dialog box. 
     #  16 = Respond with "Yes to All" for any dialog box that is displayed.
     # 256 = Display a progress dialog box but do not show the file names.
-    $destinationFolder.CopyHere($zipPackage.Items(),272)
+    # $destinationFolder.CopyHere($zipPackage.Items(),272)
+
+    sz x -o"$destination" "$zipfilename"
 } 
 
 
