@@ -112,13 +112,13 @@ function CreateBackupFiles($srcDir, $destZip)
     ZipMe -src $srcDir -zipFile $destZip
 }
 
-function CreateBackupDb($database, $targetDir, $targetFile)
+function CreateBackupDb($databaseServer, $database, $targetDir, $targetFile)
 {
     Write-Host "Backing up database..."
     Write-Host "Backing up database: $database"
     Write-Host "Dir destination: $targetDir"
     Write-Host "File (.bak) destination: $targetFile"
-    DbBackup -database $database -targetDir $targetDir -targetFile $targetFile
+    DbBackup -databaseServer $databaseServer -database $database -targetDir $targetDir -targetFile $targetFile
 }
 
 function RestoreFiles()
@@ -200,6 +200,11 @@ $bkupDbTargetDir = "C:\tmp\$dateTime $restoreDomain"
 #  or  "C:\tmp\some-domain.local.zip".
 $bkupFilesTargetFileZip = "$bkupDbTargetDir\$restoreDomain.7z"    
 
+# Database server we are backing up from
+# e.g. "(local)"
+#  or  "localhost\SQLEXPRESS2014"
+$bkupDbSrcDbServer = "localhost\SQLEXPRESS2014"
+
 # Database we are backing up.
 # e.g. "$restoreDomain"
 #  or  "some-domain.local"
@@ -222,7 +227,7 @@ $restoreDbTargetDir = "C:\tmp\"
 # Zip file and path containing the website files we want to restore
 # e.g. "$restoreDbTargetDir\$bkupDomain.zip"
 #  or  "C:\tmp\some-domain.local.zip"
-$restoreFilesSrcFileZip = "$restoreDbTargetDir\$bkupDomain.zip"    
+$restoreFilesSrcFileZip = "$restoreDbTargetDir\$bkupDomain.7z"    
 
 # Destination for the restored website files.
 # e.g. "C:\inetpub\www-dev\$restoreDomain"
@@ -266,7 +271,7 @@ function BackupWebsiteDatabase()
     Write-Host "Dir destination: $bkupDbTargetDir"
     CreateDirIfNeeded -dir $bkupDbTargetDir
     Write-Host "File (.bak) destination: $bkupDbTargetFile"
-    CreateBackupDb -database $bkupDbSrcDb -targetDir $bkupDbTargetDir -targetFile $bkupDbTargetFile
+    CreateBackupDb -databaseServer $bkupDbSrcDbServer -database $bkupDbSrcDb -targetDir $bkupDbTargetDir -targetFile $bkupDbTargetFile
     # I'm unable to add the .bak file to the root of the zip archive, so we put it in its own archive.
     #Write-Zip -Path "$bkupDbTargetDir\$bkupDbTargetFile" -OutputPath "$bkupDbTargetDir\$bkupDbTargetFile.zip"
     ZipMe -src "$bkupDbTargetDir\$bkupDbTargetFile" -zipFile "$bkupDbTargetDir\$bkupDbTargetFile.7z"

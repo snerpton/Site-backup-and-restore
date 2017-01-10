@@ -1,7 +1,7 @@
 # Chris Ashton
 # http://www.sqlmusings.com/2009/06/01/how-to-restore-sql-server-databases-using-smo-and-powershell/
 
-function DbBackup($database, $targetDir, $targetFileBak)
+function DbBackup($databaseServer, $database, $targetDir, $targetFileBak)
 {
     #============================================================
     # Backup a Database using PowerShell and SQL Server SMO
@@ -31,7 +31,8 @@ function DbBackup($database, $targetDir, $targetFileBak)
 
     #create a new server object
     #$server = New-Object ("Microsoft.SqlServer.Management.Smo.Server") "(local)"
-    $server = New-Object ("Microsoft.SqlServer.Management.Smo.Server") "localhost\SQLEXPRESS2014"
+    #$server = New-Object ("Microsoft.SqlServer.Management.Smo.Server") "localhost\SQLEXPRESS2014"
+    $server = New-Object ("Microsoft.SqlServer.Management.Smo.Server") "$databaseServer"
     #$backupDirectory = $server.Settings.BackupDirectory
     $backupDirectory = "$targetDir" 
      
