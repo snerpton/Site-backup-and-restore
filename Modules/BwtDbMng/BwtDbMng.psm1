@@ -124,7 +124,7 @@ function DbRestore()
     #See more at: http://www.sswug.org/articlesection/default.aspx?TargetID=44909#sthash.YMwxs7lz.dpuf
 }
 
-function DbRestoreNewName($srcDir, $scrFile, $dbNewName)
+function DbRestoreNewName($databaseServer, $srcDir, $scrFile, $dbNewName)
 {
     #============================================================
     # Restore a Database using PowerShell and SQL Server SMO
@@ -147,7 +147,10 @@ function DbRestoreNewName($srcDir, $scrFile, $dbNewName)
     $backupFile = "$srcDir\$scrFile"
   
     #we will query the database name from the backup header later
-    $server = New-Object ("Microsoft.SqlServer.Management.Smo.Server") "(local)"
+    #$server = New-Object ("Microsoft.SqlServer.Management.Smo.Server") "(local)"
+    $server = New-Object ("Microsoft.SqlServer.Management.Smo.Server") "$databaseServer"
+
+
     $backupDevice = New-Object("Microsoft.SqlServer.Management.Smo.BackupDeviceItem") ($backupFile, "File")
     $smoRestore = new-object("Microsoft.SqlServer.Management.Smo.Restore")
      

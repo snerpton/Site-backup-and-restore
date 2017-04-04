@@ -138,7 +138,7 @@ function RestoreDb($dbSrcFileDir, $dbSrcFileBak, $dbNewName)
     Write-Host "dbSrcFileDir: $dbSrcFileDir"
     Write-Host "dbSrcFileBak: $dbSrcFileBak"
     Write-Host "dbNewName: $dbNewName"
-    DbRestoreNewName -srcDir $dbSrcFileDir -scrFile $dbSrcFileBak -dbNewName $dbNewName
+    DbRestoreNewName -databaseServer $restoreDbServer -srcDir $dbSrcFileDir -scrFile $dbSrcFileBak -dbNewName $dbNewName
 }
 
 
